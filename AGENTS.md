@@ -1,6 +1,6 @@
 # gh-tl CLI Extension Suite Agent Context
 
-This document defines the agent bounded context router for `gh-tl`, the enterprise GitHub CLI extension suite for the `tupynambalucas-dev` organization.
+This document defines the root agent bounded context router for `gh-tl`, the enterprise GitHub CLI extension suite for the `tupynambalucas-dev` organization.
 
 ## Architectural Boundaries
 
@@ -8,26 +8,19 @@ This document defines the agent bounded context router for `gh-tl`, the enterpri
 - **CLI Framework**: `github.com/spf13/cobra` combined with `github.com/cli/go-gh/v2`
 - **Distribution Model**: Precompiled multi-platform binaries via `cli/gh-extension-precompile@v2` on GitHub Releases.
 - **Root Invocation**: `gh tl <command>`
-
-## Domain Commands
-
-- `gh tl onboard`: Interactive and automated developer workstation bootstrapper.
-- `gh tl verify`: Pre-flight compliance verification auditing 7 strict readiness gates.
+- **Design Principles**: Domain-Driven Design (DDD) bounded contexts, SOLID principles (SRP, OCP), and Single Source of Truth (SSOT).
 
 ## Subsystem Navigation
 
-- [README.md](./README.md): Primary developer documentation and usage manual.
-- [cmd/root.go](./cmd/root.go): Root Cobra command definition (`gh tl`).
-- [cmd/onboard.go](./cmd/onboard.go): Automated bootstrapping and key synchronization workflows.
-- [cmd/verify.go](./cmd/verify.go): 7 pre-flight readiness gate compliance checks.
-- [internal/git](./internal/git/git.go): Git version parser and global config wrapper.
-- [internal/ssh](./internal/ssh/ssh.go): Ed25519 keypair generation and allowed_signers manager.
-- [internal/config](./internal/config/config.go): Conditional include injector (`hasconfig:remote.*.url`).
-- [internal/github](./internal/github/keys.go): GitHub API authentication and signing key registration.
+- [README.md](./README.md): Primary suite documentation, installation, and command catalog.
+- [cmd/](./cmd/AGENTS.md): Command layer and Cobra subcommand definitions.
+  - [cmd/onboard/](./cmd/onboard/AGENTS.md): Onboarding and pre-flight readiness gate domain.
+- [internal/](./internal/AGENTS.md): Shared, domain-agnostic internal modules (`config`, `git`, `github`, `ssh`, `ui`).
 
 ## Governance Standards
 
 - All commits and release tags MUST be cryptographically signed with SSH.
-- Conventional Commits standard (`feat`, `fix`, `chore`, etc.).
-- Strictly zero emojis in code comments, terminal output, or documentation.
-- All documentation, comments, and CLI strings MUST be written in en-US.
+- Conventional Commits standard (`feat`, `fix`, `docs`, `chore`, etc.).
+- Strictly zero emojis across all code, comments, terminal output, PRs, and documentation.
+- All technical documentation, comments, and CLI strings MUST be written in en-US.
+- The AGENTS-README co-existence invariant is strictly enforced: every package containing an `AGENTS.md` must also contain a corresponding `README.md`.

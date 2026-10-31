@@ -1,21 +1,21 @@
 # gh-tl
 
-Official enterprise GitHub CLI extension suite for automated workstation provisioning, cryptographic SSH commit signing, governance verification, and multi-repository workflows across the `tupynambalucas-dev` organization.
+Official enterprise GitHub CLI extension suite for the `tupynambalucas-dev` organization, delivering modular engineering tooling, automated onboarding, cryptographic compliance, and multi-repository workflows.
 
 ---
 
 ## Overview
 
-`gh-tl` is the centralized CLI extension suite for Tupynambá Lucas engineering teams. It streamlines workstation setup, provisions Ed25519 signing keys, synchronizes credentials with GitHub, configures directory-agnostic conditional Git identities (`hasconfig:remote.*.url`), and validates compliance across 7 pre-flight readiness gates.
+`gh-tl` serves as the centralized command-line interface for Tupynambá Lucas engineering teams. Built on top of the GitHub CLI (`gh`) and the official `go-gh` SDK, it provides an extensible, modular command suite designed to eliminate operational friction and enforce organizational governance.
 
-### Why gh-tl?
+### Architectural Principles
 
-- **Unified Organization Suite**: Serves as the single centralized GitHub CLI extension for all Tupynambá Lucas internal developer tooling.
-- **Ultra-Ergonomic Command Syntax**: Invoked simply as `gh tl <command>` in the terminal.
-- **Zero-Friction Onboarding**: New developers provision their environment without manually creating SSH keys or cloning repositories beforehand.
-- **Cross-Platform Native Binaries**: Written in Go and compiled natively for Windows, macOS, and Linux via GitHub CLI extensions.
-- **Directory-Agnostic Isolation**: Applies corporate Git identities strictly to organizational repositories using `hasconfig:remote.*.url`, independent of folder structures.
-- **Pre-Flight Readiness Gates**: Validates toolchains, multi-repo orchestrators (Mani), signing parameters, and CLI authentication status in seconds.
+The repository adheres to core engineering principles defined in the organizational design system:
+
+- **Domain-Driven Design (DDD)**: Tooling capabilities are divided into isolated, domain-centric packages within `cmd/` (such as onboarding, verification, and future governance tools).
+- **Single Responsibility (SRP)**: Each command module encapsulates a single domain workflow and maintains its own dedicated documentation.
+- **Open/Closed (OCP)**: The CLI suite is open to extension via new Cobra subcommands without requiring modifications to existing domain implementations.
+- **Single Source of Truth (SSOT)**: Domain specifications and compliance rules reside in their respective command packages rather than being duplicated at the root layer.
 
 ---
 
@@ -34,7 +34,7 @@ Official enterprise GitHub CLI extension suite for automated workstation provisi
 
 ### Install Extension
 
-Install directly from GitHub via the CLI extension manager:
+Install directly from GitHub:
 
 ```bash
 gh extension install tupynambalucas-dev/gh-tl
@@ -48,138 +48,82 @@ gh extension upgrade tl
 
 ---
 
-## Commands and Usage
+## Command Catalog
 
-### 1. Automated Workstation Bootstrapping (`gh tl onboard`)
+The suite organizes commands into domain-specific modules:
 
-Run the automated provisioning workflow:
-
-```bash
-gh tl onboard
-```
-
-Options:
-```text
-Flags:
-      --name string       Developer full name for Git commits (defaults to GitHub profile)
-      --email string      Corporate email address (default "contato@tupynambalucas.dev")
-      --key-path string   Target SSH private key path (defaults to ~/.ssh/github_tupynambalucas-dev_ed25519)
-      --org string        Target GitHub organization name (default "tupynambalucas-dev")
-      --skip-upload       Skip registering SSH keys via GitHub API
-      --verify            Execute pre-flight readiness verification only
-```
-
-Example with custom name and corporate email:
-```bash
-gh tl onboard --name "Lucas Tupynamba" --email "contato@tupynambalucas.dev"
-```
-
-### 2. Pre-Flight Readiness Verification (`gh tl verify`)
-
-To audit your current workstation without altering any configuration, run:
-
-```bash
-gh tl verify
-```
-
-Output preview:
-```text
-==========================================================
-tupynambalucas-dev Workstation Readiness Gate Verification
-==========================================================
-
-[Gate 1/7] Inspecting Git version...  PASS git version 2.54.0 (>= 2.36.0)
-[Gate 2/7] Inspecting Ed25519 signing key...  PASS Active signing key detected: ~/.ssh/github_tupynambalucas-dev_ed25519.pub
-[Gate 3/7] Inspecting cryptographic commit signing config...  PASS gpg.format=ssh, commit.gpgsign=true
-[Gate 4/7] Inspecting Mani multi-repository orchestrator...  PASS Version: 0.32.1
-[Gate 5/7] Inspecting Node.js and pnpm runtime...  PASS Node v24.19.0, pnpm 10.33.2
-[Gate 6/7] Inspecting default Git SSH transport override...  PASS SSH transport rewrite configured
-[Gate 7/7] Inspecting GitHub CLI authentication...  PASS Authenticated as @tupynambalucas
-
-----------------------------------------------------------
- PASS Workstation is fully compliant with all readiness gates.
-```
-
----
-
-## Readiness Gates Specification
-
-The suite enforces 7 strict compliance gates:
-
-| Gate | Target Component | Requirement | Purpose |
+| Command | Domain | Description | Documentation |
 | :--- | :--- | :--- | :--- |
-| **Gate 1** | Git Engine | `>= 2.36.0` | Required for `hasconfig:remote.*.url` and native SSH commit signing |
-| **Gate 2** | Cryptographic Key | Ed25519 Keypair | Non-repudiation and high-performance elliptic curve signature |
-| **Gate 3** | Commit Signing | `gpg.format=ssh`, `commit.gpgsign=true` | Zero-compromise commit and tag signing requirement |
-| **Gate 4** | Multi-Repo Orchestrator | Mani CLI (`>= 0.30`) | Batch command execution and repository synchronization |
-| **Gate 5** | Developer Runtime | Node.js (`>= 22`), pnpm (`>= 9`) | Monorepo toolchains, linting, and package dependency resolution |
-| **Gate 6** | Transport Rewrite | `url.git@github.com:.insteadOf` | Enforces SSH key authentication over HTTPS password prompts |
-| **Gate 7** | GitHub CLI Auth | `gh auth status` | Validates active session and API token privileges |
+| `gh tl onboard` | Onboarding | Automated developer bootstrapping, Ed25519 key generation, GitHub API registration, and conditional Git inclusion. | [cmd/onboard/README.md](./cmd/onboard/README.md) |
+| `gh tl verify` | Compliance | Read-only pre-flight audit validating workstation compliance across 7 strict readiness gates. | [cmd/onboard/README.md](./cmd/onboard/README.md#gh-tl-verify) |
+| `gh tl audit` | Governance | Organization security auditing, branch protection rulesets, and secret scanning. | *Planned* |
+| `gh tl workspace` | Multi-Repo | Workspace synchronization and multi-repository batch coordination with Mani. | *Planned* |
 
----
+To explore command-specific flags and options:
 
-## Architecture and Git Configuration
-
-### Conditional Identity Isolation
-
-`gh-tl` configures your global `~/.gitconfig` with remote URL matching:
-
-```ini
-[includeIf "hasconfig:remote.*.url:git@github.com:tupynambalucas-dev/**"]
-    path = ~/.gitconfig-tupynambalucas-dev
-
-[includeIf "hasconfig:remote.*.url:https://github.com/tupynambalucas-dev/**"]
-    path = ~/.gitconfig-tupynambalucas-dev
-```
-
-This guarantees that:
-- Any repository belonging to `tupynambalucas-dev` automatically commits with your corporate email and cryptographic SSH key.
-- Personal or open-source repositories residing outside the organization retain your standard personal Git profile.
-
-### Isolated Corporate Configuration (`~/.gitconfig-tupynambalucas-dev`)
-
-```ini
-[user]
-    name = Your Name
-    email = contato@tupynambalucas.dev
-    signingkey = ~/.ssh/github_tupynambalucas-dev_ed25519.pub
-
-[commit]
-    gpgsign = true
-
-[tag]
-    gpgsign = true
-
-[gpg]
-    format = ssh
-
-[gpg "ssh"]
-    allowedSignersFile = ~/.ssh/allowed_signers
+```bash
+gh tl --help
+gh tl <command> --help
 ```
 
 ---
 
-## Development and Testing
+## Repository Structure
 
-### Build from Source
+```text
+gh-tl/
+├── cmd/                          # Command layer (Cobra CLI subcommands)
+│   ├── root.go                   # Suite entrypoint and command registrar
+│   ├── onboard/                  # Onboarding & verification domain
+│   │   ├── onboard.go            # 'gh tl onboard' implementation
+│   │   ├── verify.go             # 'gh tl verify' implementation
+│   │   ├── README.md             # Domain specification and 7-gate reference
+│   │   └── AGENTS.md             # Onboarding domain agent router
+│   ├── README.md                 # Command layer documentation
+│   └── AGENTS.md                 # Command layer agent router
+├── internal/                     # Private, domain-agnostic shared modules
+│   ├── config/                   # Git configuration and include templates
+│   ├── git/                      # Git execution and version parsing
+│   ├── github/                   # GitHub REST client (go-gh/v2)
+│   ├── ssh/                      # Ed25519 key management and allowed_signers
+│   ├── ui/                       # Terminal formatting and typography
+│   ├── README.md                 # Internal modules documentation
+│   └── AGENTS.md                 # Internal modules agent router
+├── .github/                      # Workflows and extension metadata
+│   └── workflows/
+│       ├── ci.yml                # Multi-platform build and unit test matrix
+│       └── release.yml           # Automated cross-compilation pipeline
+├── AGENTS.md                     # Root context router
+├── go.mod                        # Go module definition
+├── go.sum                        # Go dependency checksums
+├── LICENSE                       # Apache License 2.0
+├── main.go                       # Binary entrypoint
+└── README.md                     # Root suite documentation
+```
+
+---
+
+## Development and Contribution
+
+### Build Locally
 
 ```bash
 git clone git@github.com:tupynambalucas-dev/gh-tl.git
 cd gh-tl
 
-# Run tests
+# Execute unit tests
 go test -v ./...
 
 # Build local binary
 go build -v .
 
-# Install locally as an extension for testing
+# Install locally into gh for testing
 gh extension install .
 ```
 
-### Automated Release Pipeline
+### Release Pipeline
 
-Releases are automatically cross-compiled and published via GitHub Actions using `cli/gh-extension-precompile@v2`. Tagging a commit with `v*` triggers multi-platform binary compilation:
+Releases are automatically cross-compiled for Windows, macOS, and Linux using `cli/gh-extension-precompile@v2` when a signed Git tag is pushed:
 
 ```bash
 git tag -s v0.1.0 -m "release: v0.1.0"

@@ -1,4 +1,4 @@
-package cmd
+package onboard
 
 import (
 	"fmt"
@@ -22,28 +22,29 @@ var (
 	flagVerify     bool
 )
 
-var onboardCmd = &cobra.Command{
-	Use:   "onboard",
-	Short: "Automated workstation provisioning, SSH key generation, and identity isolation",
-	Long: `Configures cryptographic SSH signing, conditional Git identities via
+// NewOnboardCmd creates and configures the 'onboard' cobra command.
+func NewOnboardCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "onboard",
+		Short: "Automated workstation provisioning, SSH key generation, and identity isolation",
+		Long: `Configures cryptographic SSH signing, conditional Git identities via
 hasconfig:remote.*.url, multi-repo tooling, and registers SSH keys with GitHub API.`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		if flagVerify {
-			return RunVerify()
-		}
-		return RunSetup()
-	},
-}
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if flagVerify {
+				return RunVerify()
+			}
+			return RunSetup()
+		},
+	}
 
-func init() {
-	onboardCmd.Flags().StringVar(&flagName, "name", "", "Developer full name for Git commits")
-	onboardCmd.Flags().StringVar(&flagEmail, "email", "contato@tupynambalucas.dev", "Corporate email address")
-	onboardCmd.Flags().StringVar(&flagKeyPath, "key-path", "", "Target SSH private key path (defaults to ~/.ssh/github_tupynambalucas-dev_ed25519)")
-	onboardCmd.Flags().StringVar(&flagOrg, "org", "tupynambalucas-dev", "Target GitHub organization name")
-	onboardCmd.Flags().BoolVar(&flagSkipUpload, "skip-upload", false, "Skip registering SSH keys via GitHub API")
-	onboardCmd.Flags().BoolVar(&flagVerify, "verify", false, "Execute pre-flight readiness verification only")
+	cmd.Flags().StringVar(&flagName, "name", "", "Developer full name for Git commits")
+	cmd.Flags().StringVar(&flagEmail, "email", "contato@tupynambalucas.dev", "Corporate email address")
+	cmd.Flags().StringVar(&flagKeyPath, "key-path", "", "Target SSH private key path (defaults to ~/.ssh/github_tupynambalucas-dev_ed25519)")
+	cmd.Flags().StringVar(&flagOrg, "org", "tupynambalucas-dev", "Target GitHub organization name")
+	cmd.Flags().BoolVar(&flagSkipUpload, "skip-upload", false, "Skip registering SSH keys via GitHub API")
+	cmd.Flags().BoolVar(&flagVerify, "verify", false, "Execute pre-flight readiness verification only")
 
-	rootCmd.AddCommand(onboardCmd)
+	return cmd
 }
 
 // RunSetup executes the end-to-end automated workstation bootstrapping workflow.

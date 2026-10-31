@@ -1,4 +1,4 @@
-package cmd
+package onboard
 
 import (
 	"fmt"
@@ -14,16 +14,15 @@ import (
 	"github.com/tupynambalucas-dev/gh-tl/internal/ui"
 )
 
-var verifyCmd = &cobra.Command{
-	Use:   "verify",
-	Short: "Validate workstation compliance across the 7 pre-flight readiness gates",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return RunVerify()
-	},
-}
-
-func init() {
-	rootCmd.AddCommand(verifyCmd)
+// NewVerifyCmd creates and configures the 'verify' cobra command.
+func NewVerifyCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "verify",
+		Short: "Validate workstation compliance across the 7 pre-flight readiness gates",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return RunVerify()
+		},
+	}
 }
 
 // RunVerify executes the 7 compliance checks without altering local configuration.
