@@ -182,8 +182,8 @@ gh extension install .
 Releases are automatically cross-compiled and published via GitHub Actions using `cli/gh-extension-precompile@v2`. Tagging a commit with `v*` triggers multi-platform binary compilation:
 
 ```bash
-git tag -s v0.2.0 -m "release: v0.2.0"
-git push origin v0.2.0
+git tag -s v0.1.0 -m "release: v0.1.0"
+git push origin v0.1.0
 ```
 
 ---
