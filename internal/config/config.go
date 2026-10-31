@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/tupynambalucas-dev/gh-onboard/internal/git"
+	"github.com/tupynambalucas-dev/gh-tl/internal/git"
 )
 
 // NormalizePath converts backslashes to forward slashes for Git config compatibility.

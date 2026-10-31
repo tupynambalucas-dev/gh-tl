@@ -8,10 +8,10 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/tupynambalucas-dev/gh-onboard/internal/git"
-	"github.com/tupynambalucas-dev/gh-onboard/internal/github"
-	"github.com/tupynambalucas-dev/gh-onboard/internal/ssh"
-	"github.com/tupynambalucas-dev/gh-onboard/internal/ui"
+	"github.com/tupynambalucas-dev/gh-tl/internal/git"
+	"github.com/tupynambalucas-dev/gh-tl/internal/github"
+	"github.com/tupynambalucas-dev/gh-tl/internal/ssh"
+	"github.com/tupynambalucas-dev/gh-tl/internal/ui"
 )
 
 var verifyCmd = &cobra.Command{
@@ -51,16 +51,19 @@ func RunVerify() error {
 	// Gate 2: SSH Signing Key Existence
 	fmt.Print("[Gate 2/7] Inspecting Ed25519 signing key... ")
 	home, _ := os.UserHomeDir()
-	defaultPubKey := filepath.Join(home, ".ssh", "github_tupynambalucas_ed25519.pub")
+	defaultPubKey := filepath.Join(home, ".ssh", "github_tupynambalucas-dev_ed25519.pub")
+	legacyPubKey := filepath.Join(home, ".ssh", "github_tupynambalucas_ed25519.pub")
 	signingKeyConfig, _ := git.GetConfig("user.signingkey")
 
 	if signingKeyConfig != "" && ssh.KeyExists(signingKeyConfig) {
 		ui.PrintPass(fmt.Sprintf("Active signing key detected: %s", signingKeyConfig))
 	} else if ssh.KeyExists(defaultPubKey) {
 		ui.PrintPass(fmt.Sprintf("Key found at %s", defaultPubKey))
+	} else if ssh.KeyExists(legacyPubKey) {
+		ui.PrintPass(fmt.Sprintf("Key found at %s", legacyPubKey))
 	} else {
 		ui.PrintFail("Ed25519 signing key not found")
-		ui.PrintRemediation("Run 'gh onboard' to generate and provision your corporate keypair")
+		ui.PrintRemediation("Run 'gh tl onboard' to generate and provision your corporate keypair")
 		failedGates++
 	}
 

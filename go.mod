@@ -1,4 +1,4 @@
-module github.com/tupynambalucas-dev/gh-onboard
+module github.com/tupynambalucas-dev/gh-tl
 
 go 1.27.3
 

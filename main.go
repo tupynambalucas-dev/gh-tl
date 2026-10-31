@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/tupynambalucas-dev/gh-onboard/cmd"
+	"github.com/tupynambalucas-dev/gh-tl/cmd"
 )
 
 func main() {

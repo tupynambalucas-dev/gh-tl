@@ -1,20 +1,21 @@
-# gh-onboard
+# gh-tl
 
-Official GitHub CLI extension for automated workstation provisioning, cryptographic SSH commit signing, and multi-repository readiness compliance across the `tupynambalucas-dev` organization.
+Official enterprise GitHub CLI extension suite for automated workstation provisioning, cryptographic SSH commit signing, governance verification, and multi-repository workflows across the `tupynambalucas-dev` organization.
 
 ---
 
 ## Overview
 
-`gh-onboard` streamlines the developer onboarding experience by replacing fragile manual setup steps and platform-dependent scripts with a single native GitHub CLI command. It provisions cryptographic Ed25519 signing keys, synchronizes credentials with GitHub, configures directory-agnostic conditional Git identities (`hasconfig:remote.*.url`), and validates workstation compliance across 7 pre-flight readiness gates.
+`gh-tl` is the centralized CLI extension suite for Tupynambá Lucas engineering teams. It streamlines workstation setup, provisions Ed25519 signing keys, synchronizes credentials with GitHub, configures directory-agnostic conditional Git identities (`hasconfig:remote.*.url`), and validates compliance across 7 pre-flight readiness gates.
 
-### Why gh-onboard?
+### Why gh-tl?
 
-- **Zero-Friction Onboarding**: New developers do not need to clone repositories or manually generate SSH keys before their first contribution.
-- **Cross-Platform Binary**: Written in Go and compiled natively for Windows, macOS, and Linux via GitHub CLI extensions.
-- **Dual-Purpose SSH Keys**: Automates the dual registration of SSH keys for both Git transport (`authentication`) and commit validation (`signing`).
-- **Directory-Agnostic Isolation**: Uses Git conditional includes (`hasconfig:remote.*.url`) to apply corporate identity strictly to organizational repositories, regardless of where they are cloned on disk.
-- **Pre-Flight Readiness Gates**: Validates toolchains, orchestrators (Mani), signing parameters, and CLI authentication status in seconds.
+- **Unified Organization Suite**: Serves as the single centralized GitHub CLI extension for all Tupynambá Lucas internal developer tooling.
+- **Ultra-Ergonomic Command Syntax**: Invoked simply as `gh tl <command>` in the terminal.
+- **Zero-Friction Onboarding**: New developers provision their environment without manually creating SSH keys or cloning repositories beforehand.
+- **Cross-Platform Native Binaries**: Written in Go and compiled natively for Windows, macOS, and Linux via GitHub CLI extensions.
+- **Directory-Agnostic Isolation**: Applies corporate Git identities strictly to organizational repositories using `hasconfig:remote.*.url`, independent of folder structures.
+- **Pre-Flight Readiness Gates**: Validates toolchains, multi-repo orchestrators (Mani), signing parameters, and CLI authentication status in seconds.
 
 ---
 
@@ -22,10 +23,10 @@ Official GitHub CLI extension for automated workstation provisioning, cryptograp
 
 ### Prerequisites
 
-1. **GitHub CLI (`gh`)**: Install via your package manager:
+1. **GitHub CLI (`gh`)**:
    - Windows: `winget install GitHub.cli` or `scoop install gh`
    - macOS: `brew install gh`
-   - Linux: `sudo apt install gh` or distribution equivalent
+   - Linux: `sudo apt install gh`
 2. **Authenticate with GitHub**:
    ```bash
    gh auth login --git-protocol ssh --web
@@ -36,25 +37,25 @@ Official GitHub CLI extension for automated workstation provisioning, cryptograp
 Install directly from GitHub via the CLI extension manager:
 
 ```bash
-gh extension install tupynambalucas-dev/gh-onboard
+gh extension install tupynambalucas-dev/gh-tl
 ```
 
 To update to the latest release:
 
 ```bash
-gh extension upgrade onboard
+gh extension upgrade tl
 ```
 
 ---
 
-## Usage
+## Commands and Usage
 
-### 1. Automated Workstation Bootstrapping
+### 1. Automated Workstation Bootstrapping (`gh tl onboard`)
 
-Run the interactive setup workflow:
+Run the automated provisioning workflow:
 
 ```bash
-gh onboard
+gh tl onboard
 ```
 
 Options:
@@ -70,15 +71,15 @@ Flags:
 
 Example with custom name and corporate email:
 ```bash
-gh onboard --name "Lucas Tupynamba" --email "contato@tupynambalucas.dev"
+gh tl onboard --name "Lucas Tupynamba" --email "contato@tupynambalucas.dev"
 ```
 
-### 2. Pre-Flight Readiness Verification
+### 2. Pre-Flight Readiness Verification (`gh tl verify`)
 
-To audit your current workstation without applying any configuration changes, run the `verify` subcommand:
+To audit your current workstation without altering any configuration, run:
 
 ```bash
-gh onboard verify
+gh tl verify
 ```
 
 Output preview:
@@ -103,7 +104,7 @@ tupynambalucas-dev Workstation Readiness Gate Verification
 
 ## Readiness Gates Specification
 
-The extension enforces 7 strict compliance gates:
+The suite enforces 7 strict compliance gates:
 
 | Gate | Target Component | Requirement | Purpose |
 | :--- | :--- | :--- | :--- |
@@ -121,7 +122,7 @@ The extension enforces 7 strict compliance gates:
 
 ### Conditional Identity Isolation
 
-`gh-onboard` configures your global `~/.gitconfig` with remote URL matching:
+`gh-tl` configures your global `~/.gitconfig` with remote URL matching:
 
 ```ini
 [includeIf "hasconfig:remote.*.url:git@github.com:tupynambalucas-dev/**"]
@@ -133,7 +134,7 @@ The extension enforces 7 strict compliance gates:
 
 This guarantees that:
 - Any repository belonging to `tupynambalucas-dev` automatically commits with your corporate email and cryptographic SSH key.
-- Personal or open-source repositories residing outside the organization retain your standard global Git profile.
+- Personal or open-source repositories residing outside the organization retain your standard personal Git profile.
 
 ### Isolated Corporate Configuration (`~/.gitconfig-tupynambalucas-dev`)
 
@@ -163,8 +164,8 @@ This guarantees that:
 ### Build from Source
 
 ```bash
-git clone git@github.com:tupynambalucas-dev/gh-onboard.git
-cd gh-onboard
+git clone git@github.com:tupynambalucas-dev/gh-tl.git
+cd gh-tl
 
 # Run tests
 go test -v ./...
@@ -178,11 +179,11 @@ gh extension install .
 
 ### Automated Release Pipeline
 
-Releases are automatically cross-compiled and published via GitHub Actions using `cli/gh-extension-precompile@v2`. Tagging a commit with `v*` triggers multi-platform binary compilation and asset attachment:
+Releases are automatically cross-compiled and published via GitHub Actions using `cli/gh-extension-precompile@v2`. Tagging a commit with `v*` triggers multi-platform binary compilation:
 
 ```bash
-git tag -s v0.1.0 -m "release: v0.1.0"
-git push origin v0.1.0
+git tag -s v0.2.0 -m "release: v0.2.0"
+git push origin v0.2.0
 ```
 
 ---
